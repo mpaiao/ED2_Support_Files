@@ -28,6 +28,7 @@ place[[ 1]] = list( name     = "santarem_km83"
                   , h5pref   = "Santarem_Km83"
                   , height   = 64
                   , dtdat    = 3600.
+                  , imetavg  = 1
                   )#end if
 #------------------------------------------------------------------------------------------#
 
@@ -122,7 +123,7 @@ for (p in sequence(nplaces)){
    #     Find the zenith angle, to split radiation into components.                        #
    #---------------------------------------------------------------------------------------#
    zen           = ed.zen(lon=info$lon,lat=info$lat,when=datum$when,ed21=TRUE
-                         ,zeronight=FALSE,meanval=TRUE,imetavg=1,nmean=60     )
+                         ,zeronight=FALSE,meanval=TRUE,imetavg=info$imetavg,nmean=60)
    datum$cosz    = zen$cosz
    #---------------------------------------------------------------------------------------#
 
@@ -133,7 +134,7 @@ for (p in sequence(nplaces)){
    #     Find the zenith angle, to split radiation into components.                        #
    #---------------------------------------------------------------------------------------#
    zen           = ed.zen(lon=info$lon,lat=info$lat,when=datum$when,ed21=TRUE
-                         ,zeronight=FALSE,meanval=TRUE,imetavg=1,nmean=15     )
+                         ,zeronight=FALSE,meanval=TRUE,imetavg=info$imetavg,nmean=15)
    datum$cosz    = zen$cosz
    #---------------------------------------------------------------------------------------#
 
