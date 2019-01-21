@@ -48,12 +48,13 @@ outpath = file.path(here,"sites") # Path where the output should be written
 #------------------------------------------------------------------------------------------#
 #     Location of interest.                                                                #
 #------------------------------------------------------------------------------------------#
-place    = "Santarem_Km83"
-iata     = "s83"
-identity = "default"
-lon      = -54.971
-lat      =  -3.018
-year.out = 2000
+place      = "Santarem_Km83"   # Name of the site, for output directory
+census.csv = "s83_census.csv"  # Name of the csv file with the forest inventory data
+iata       = "s83"             # Tag for site (short name for output files)
+identity   = "default"         # Unique identification (in case you have multiple tests).
+lon        = -54.971           # Longitude of the site
+lat        =  -3.018           # Latitude of the site
+year.out   = 2000              # Year of measurements
 #------------------------------------------------------------------------------------------#
 
 
@@ -86,7 +87,7 @@ fast.soil.n   = 0.00348  #  Fast soil nitrogen        [kgN/m2]
 #     Set allometric option (not necessary, this is just to make the dummy columns in the  #
 # pss and css files to be consistent).  This has the same meaning as the ED2IN option.     #
 #------------------------------------------------------------------------------------------#
-iallom = 3
+iallom = 2
 #------------------------------------------------------------------------------------------#
 
 #------------------------------------------------------------------------------------------#
@@ -151,7 +152,7 @@ pft       <<- pft
 
 
 #----- Read forest inventory data. --------------------------------------------------------#
-census.input = file.path(here,"s83_census.csv")
+census.input = file.path(here,census.csv)
 cat(" + Read in the data set (",basename(census.input),").","\n",sep="")
 census    = read.csv(census.input,header=TRUE,stringsAsFactors=FALSE)
 ncohorts  = nrow(census)
