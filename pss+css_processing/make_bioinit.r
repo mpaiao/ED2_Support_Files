@@ -83,6 +83,21 @@ fast.soil.n   = 0.00348  #  Fast soil nitrogen        [kgN/m2]
 
 
 #------------------------------------------------------------------------------------------#
+#     Set allometric option (not necessary, this is just to make the dummy columns in the  #
+# pss and css files to be consistent).  This has the same meaning as the ED2IN option.     #
+#------------------------------------------------------------------------------------------#
+iallom = 3
+#------------------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------------------#
+#     PFTs that will be used.  Currently this script supports only PFTs 2, 3, 4.  Feel     #
+# free to adapt it for other PFTs.                                                         #
+#------------------------------------------------------------------------------------------#
+pft.idx     = c(2,3,4)
+#------------------------------------------------------------------------------------------#
+
+
+#------------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------------#
@@ -110,28 +125,45 @@ source(file.path(here,"allometry.r"))
 #------------------------------------------------------------------------------------------#
 
 
+#------------------------------------------------------------------------------------------#
+#     Set some constants.                                                                  #
+#------------------------------------------------------------------------------------------#
+C2B <<- 2.0  # Biomass:Carbon ratio [kg_Bio / kg_C]
+#------------------------------------------------------------------------------------------#
+
+
 #----- Create output directory if it doesn't exist. ---------------------------------------#
 outplace = file.path(outpath,place)
-if (! file.exists(outpath )) dir.create(outpath )
-if (! file.exists(outplace)) dir.create(outplace)
+dummy    = dir.create(outplace,recursive=TRUE,showWarnings=FALSE)
 #------------------------------------------------------------------------------------------#
 
 
 #------------------------------------------------------------------------------------------#
-#      Read the data set with the tree inventory.                                          #
+#      Read the table with PFT parameters.                                                 #
 #------------------------------------------------------------------------------------------#
+pft.table =   file.path(here,"pft_allom_table.csv")
+cat(" + Read in the PFT table (",basename(pft.table),").","\n",sep="")
+pft       =   read.csv(pft.table,header=TRUE,stringsAsFactors=FALSE)
+pft       =   pft[pft$iallom == iallom,,drop=FALSE]
+pft       =   pft[order(pft$ipft),,drop=FALSE]
+pft       <<- pft
+#------------------------------------------------------------------------------------------#
+
+
+#----- Read forest inventory data. --------------------------------------------------------#
 census.input = file.path(here,"s83_census.csv")
-cat(" + Reading in the data set (",basename(census.input),")...","\n",sep="")
+cat(" + Read in the data set (",basename(census.input),").","\n",sep="")
 census    = read.csv(census.input,header=TRUE,stringsAsFactors=FALSE)
 ncohorts  = nrow(census)
 #------------------------------------------------------------------------------------------#
 
 
+
+
 #------------------------------------------------------------------------------------------#
 #     Find the plant functional type.  We use wood density to determine the break points.  #
 #------------------------------------------------------------------------------------------#
-pft.idx     = c(2,3,4)
-pft.mid.rho = c(0.53,0.71,0.90)
+pft.mid.rho = pft$rho[pft.idx]
 npft        = length(pft.mid.rho)
 pft.brks    = c(-Inf,0.5*(pft.mid.rho[-1]+pft.mid.rho[-npft]),Inf)
 pft.cut     = as.numeric(cut(census$wood.dens,pft.brks))
@@ -150,10 +182,10 @@ census$n = with(census, ifelse(dbh < min.dbh.allplot,1/subplot.area,1/allplot.ar
 #------------------------------------------------------------------------------------------#
 #     Estimate biomass and leaf area index.                                                #
 #------------------------------------------------------------------------------------------#
-census$height = with(census,dbh2h  (dbh=dbh,ipft=pft))
-census$balive = with(census,dbh2ba (dbh=dbh,ipft=pft))
-census$bdead  = with(census,dbh2bd (dbh=dbh,ipft=pft))
-census$lai    = with(census,dbh2lai(dbh=dbh,nplant=n,ipft=pft))
+census$height = with(census,dbh2h   (dbh=dbh,ipft=pft))
+census$balive = with(census,size2ba (dbh=dbh,hgt=height,ipft=pft))
+census$bdead  = with(census,size2bd (dbh=dbh,hgt=height,ipft=pft))
+census$lai    = with(census,size2lai(dbh=dbh,hgt=height,nplant=n,ipft=pft))
 #------------------------------------------------------------------------------------------#
 
 
@@ -164,7 +196,7 @@ census$lai    = with(census,dbh2lai(dbh=dbh,nplant=n,ipft=pft))
 #     Organise the dat using the tags, blocks, and coordinates.                            #
 #------------------------------------------------------------------------------------------#
 o             = order(census$plots,-census$dbh,census$tag)
-census        = census[o,]
+census        = census[o,,drop=FALSE]
 #------------------------------------------------------------------------------------------#
 
 
@@ -172,10 +204,9 @@ census        = census[o,]
 #------------------------------------------------------------------------------------------#
 #    File names for output.                                                                #
 #------------------------------------------------------------------------------------------#
-outprefix = paste(iata,"_",identity,".lat",sprintf("%.3f",lat),"lon",sprintf("%.3f",lon)
-                 ,sep="")
-pssfile   = file.path(outplace,paste(outprefix,"pss",sep="."))
-cssfile   = file.path(outplace,paste(outprefix,"css",sep="."))
+outprefix = paste0(iata,"_",identity,".lat",sprintf("%.3f",lat),"lon",sprintf("%.3f",lon))
+pssfile   = file.path(outplace,paste0(outprefix,".pss"))
+cssfile   = file.path(outplace,paste0(outprefix,".css"))
 #------------------------------------------------------------------------------------------#
 
 
@@ -185,7 +216,7 @@ cssfile   = file.path(outplace,paste(outprefix,"css",sep="."))
 #------------------------------------------------------------------------------------------#
 #     Format the PSS/CSS files.                                                            #
 #------------------------------------------------------------------------------------------#
-cat (" + Creating PSS/CSS file...","\n")
+cat (" + Create PSS/CSS file.","\n")
    #---------------------------------------------------------------------------------------#
    #      Output data frame.                                                               #
    #---------------------------------------------------------------------------------------#
@@ -204,8 +235,14 @@ cat (" + Creating PSS/CSS file...","\n")
 
 
    #----- Write the cohort file. ----------------------------------------------------------#
-   dummy   = write.table(x=outcohorts,file=cssfile,append=FALSE,quote=FALSE,sep=" "
-                        ,row.names=FALSE,col.names=TRUE)
+   dummy   = write.table( x         = outcohorts
+                        , file      = cssfile
+                        , append    = FALSE
+                        , quote     = FALSE
+                        , sep       = " "
+                        , row.names = FALSE
+                        , col.names = TRUE
+                        )#end write.table
    #---------------------------------------------------------------------------------------#
 
 
@@ -234,7 +271,13 @@ cat (" + Creating PSS/CSS file...","\n")
 
 
    #----- Write the patch file. -----------------------------------------------------------#
-   dummy   = write.table(x=outpatches,file=pssfile,append=FALSE,quote=FALSE,sep=" "
-                        ,row.names=FALSE,col.names=TRUE)
+   dummy   = write.table( x         = outpatches
+                        , file      = pssfile
+                        , append    = FALSE
+                        , quote     = FALSE
+                        , sep       = " "
+                        , row.names = FALSE
+                        , col.names = TRUE
+                        )#end write.table
    #---------------------------------------------------------------------------------------#
 #------------------------------------------------------------------------------------------#
