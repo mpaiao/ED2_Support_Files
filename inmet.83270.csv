@@ -1,0 +1,25 @@
+--------------------
+BDMEP - INMET
+--------------------
+Station           : CANARANA - MT (WMO: 83270)
+Latitude  (degrees) : -13.47
+Longitude (degrees) : -52.27
+Altitude  (metres): 430.00
+Operational status: active
+First operation: 04/08/1987
+Requested period: 01/01/1900 through 07/06/2017
+Data below are the same as reported by BDMEP
+Time in UTC
+--------------------
+Obs.: The data are separated by ; (semicolon) in txt format.
+      This header follows the INMET format. The first 17 lines are currently ignored.
+--------------------
+Station;Day;Month;Year;Hour;Minute;Second;Precipitation_mm
+83270;06;02;1995;12;00;00;0
+83270;07;02;1995;12;00;00;18.8
+83270;09;02;1995;12;00;00;2.9
+83270;10;02;1995;12;00;00;0
+83270;11;02;1995;12;00;00;2.8
+83270;12;02;1995;12;00;00;24.8
+83270;13;02;1995;12;00;00;24.8
+83270;15;02;1995;12;00;00;0
