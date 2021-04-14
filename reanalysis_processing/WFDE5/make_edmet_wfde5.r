@@ -963,7 +963,7 @@ if ( any.written && ( (! file.exists(header.wfde5)) || overwrite.header ) ){
               ,paste0("   'hgt'   'lon'   'lat'  'land' 'dlwrf' 'nbdsf' 'nddsf' 'prate'"
                      ,"  'pres'    'sh'   'tmp'  'ugrd' 'vbdsf' 'vddsf'  'vgrd'")
               ,paste (c(height,rep(dtdat,times=14)),collapse=" ")
-              ,paste (c(4,rep(2,times= 3),rep(1,times=3),2,rep(1,times=7),collapse=" "))
+              ,paste (c(4,rep(2,times= 3),rep(1,times=3),2,rep(1,times=7)),collapse=" ")
               ,paste0(" ")
               ,paste0("!===========================================================!")
               ,paste0("! README                                                    !")
