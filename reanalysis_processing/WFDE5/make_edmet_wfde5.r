@@ -688,7 +688,23 @@ for (ww in sequence(nwhen)){
       dtwhen    = dtdat  / day.sec
       dtznth    = dtcosz / day.sec
       when.dat  = chron( seq(from=whena,by=dtwhen,length.out=nt))
-      when.cosz = chron( seq(from=whena,by=dtznth,length.out=nt*nsub.cosz) - dtwhen + dtznth )
+      if (orig.imetavg == 1){
+         #----- Time stamp is the end of averaging window. --------------------------------#
+         when.cosz = chron( seq(from=whena,by=dtznth,length.out=nt*nsub.cosz)
+                          - dtwhen + dtznth
+                          )#end chron
+         #---------------------------------------------------------------------------------#
+      }else if (orig.imetavg == 2){
+         #----- Time stamp is the beginning of averaging window. --------------------------#
+         when.cosz = chron( seq(from=whena,by=dtznth,length.out=nt*nsub.cosz) )
+         #---------------------------------------------------------------------------------#
+      }else if (orig.imetavg == 3){
+         #----- Time stamp is the middle of averaging window. -----------------------------#
+         when.cosz = chron( seq(from=whena,by=dtznth,length.out=nt*nsub.cosz)
+                          - dtwhen/2 + dtznth
+                          )#end chron
+         #---------------------------------------------------------------------------------#
+      }#end if (orig.imetavg == 1)
       idx.cosz  = rep(sequence(nt),each=nsub.cosz)
 
       yshow = round(perclab*ny/100)
