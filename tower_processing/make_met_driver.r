@@ -131,17 +131,6 @@ for (p in sequence(nplaces)){
 
 
    #---------------------------------------------------------------------------------------#
-   #     Find the zenith angle, to split radiation into components.                        #
-   #---------------------------------------------------------------------------------------#
-   zen           = ed.zen(lon=info$lon,lat=info$lat,when=datum$when,ed21=TRUE
-                         ,zeronight=FALSE,meanval=TRUE,imetavg=info$imetavg,nmean=15)
-   datum$cosz    = zen$cosz
-   #---------------------------------------------------------------------------------------#
-
-
-
-
-   #---------------------------------------------------------------------------------------#
    #     Split the incoming radiation into components, or estimate NIR from PAR if PAR     #
    # measurements are available.                                                           #
    #---------------------------------------------------------------------------------------#
