@@ -19,9 +19,35 @@ outpath = file.path(here,"sites")  # Output path
 
 #------------------------------------------------------------------------------------------#
 #    List of places, with the name, first and last full years, and the output variable .   #
+#                                                                                          #
+# name     - Name of the site for input file name (which should be filled_<name>.csv).     #
+# longname - Longer site name description (for labels).                                    #
+# lon      - Site longitude                                                                #
+# lat      - Site latitude                                                                 #
+# h5pref   - Prefix for meteorological driver file names (output files)                    #
+# height   - Reference height (make sure to be above the height of the tallest             #
+#            possible tree)                                                                #
+# dtdat    - Time interval for output                                                      #
+# imetavg  - What is the meaning of the time stamps in the input file. The examples below  #
+#            are for hourly data sets and what the time stamp "2022-03-23 16:00 UTC"       #
+#            corresponds to:                                                               #
+#            1 - End at time stamp       (2022-03-23 15:00 UTC to 2022-03-23 16:00 UTC)    #
+#            2 - Beginning at time stamp (2022-03-23 16:00 UTC to 2022-03-23 17:00 UTC)    #
+#            3 - Middle at time stamp    (2022-03-23 15:30 UTC to 2022-03-23 16:30 UTC)    #
+#                                                                                          #
+# *** IMPORTANT NOTES ***                                                                  #
+#                                                                                          #
+# 1 - Longitude and latitude are important for the radiation components model, set both    #
+#     coordinates as accurately as possible,                                               #
+# 2 - This script assumes that all times are in UTC. If they aren't, you must preprocess   #
+#     the code to make them in UTC                                                         #
+# 3 - This script will not fill gaps in the meteorological drivers. This must be done      #
+#     externally, before using this script.                                                #
 #------------------------------------------------------------------------------------------#
+n           = 0
 place       = list()
-place[[ 1]] = list( name     = "santarem_km83"
+n           = n + 1
+place[[n]]  = list( name     = "santarem_km83"
                   , longname = "Santarem - Km 83"
                   , lon      = -54.971
                   , lat      =  -3.018
